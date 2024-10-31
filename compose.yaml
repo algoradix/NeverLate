@@ -1,0 +1,54 @@
+
+services:
+  my_python_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    secrets:
+      - db-password
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres@sha256:91f464e7ba0ad91a106c94cff079fb4384139291b8c0502fd36989cf2c788bbb # 16.4
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=mta_data
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4@sha256:585350593e8b0483941fa9a2d5ebb04b88a66e83a7b5603c169f9446b271312f # 8.12
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: macallan@company.dev
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin-password  # Change this to a strong password
+    ports:
+      - 8080:80  # Access pgAdmin on http://localhost:8080
+    depends_on:
+      database:
+        condition: service_healthy
+    secrets:
+      - pgadmin-password
+
+volumes:
+  db-data:
+
+secrets:
+  db-password:
+    file: secrets/db_password.txt
+  pgadmin-password:
+    file: secrets/pgadmin_password.txt
+

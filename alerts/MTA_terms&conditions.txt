@@ -1,0 +1,10 @@
+MTA prohibits the development of an app that would make the data available to others directly from MTA's server(s)
+
+
+Download and host the data on a non-MTA server
+
+
+When using MTA Real-Time data feeds, if there is a lag time of more than 1 minute between the real time of the MTA data and the actual time of the MTA data as accessed from your server, you will also indicate the information provided by your app to the end-user may not be real time because of the lag time between the real time of the MTA data and the MTA data as provided by you
+
+
+You will not state or imply that the data is accurate, complete, or timely. You may however, state that you obtained the data from MTA and, through your own server, are redistributing it.
