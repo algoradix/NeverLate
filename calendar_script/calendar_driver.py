@@ -9,8 +9,63 @@ from googleapiclient.errors import HttpError
 
 
 
+from alerts import get_mta_alerts
+from calendar_script.Calendar_event import Calendar_event
+
+
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"] 
+
+active_period_queue = {}
+def queue_event_by_active_periods(event, active_period_queue):
+
+    for i in range(len(event.active_periods)):
+            
+            start = event.format_rfc3339(event.active_periods[i][0])
+            end = event.format_rfc3339(event.active_periods[i][1])
+
+            event.event['start']['dateTime'] = start
+            event.event['end']['dateTime'] = end
+
+            period_key = (start, end)
+
+            if period_key not in active_period_queue:
+                 active_period_queue[period_key] = []
+            active_period_queue[period_key].append(event)
+
+            # print(event.event, "\n")
+            # test_service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
+
+
+
+    return 0
+
+
+def post_event(event, test_service):
+
+        # print(len(event.active_periods))
+
+        # test_event = {
+        #         'summary': f'N test',
+        #         'description': 'header_text' + '\n' + 'description' + '\n' + 'human_readable_active_period',
+        #         'colorId': '2', 
+        #         'start': {
+        #             'dateTime': '2024-11-27T23:45:00-05:00',
+        #             'timeZone': 'America/New_York'
+        #         },
+        #         'end': {
+        #             'dateTime': '2024-11-28T05:00:00-05:00',
+        #             'timeZone': 'America/New_York'
+        #         }
+        #     }
+        
+        
+
+    
+        
+        return 0
+
 
 def test_push():
 
@@ -35,27 +90,57 @@ def test_push():
 
     try:
         service = build("calendar", "v3", credentials=creds)
+        mta_alerts_calendarid = '46a445060a65f2a816253dfb602c10dcc7cfd02749530c69c7ca2616ce5e5747@group.calendar.google.com'
         
-        # rfc3339_timestamp = datetime.now(timezone.utc).isoformat()
-        event = {
-            'summary': 'DOCKER',
-            'description': 'A chance to hear more about Google\'s developer products.',
-            'colorId': '5', 
-            'start': {
-                'date': '2024-11-16'
-            },
-            'end': {
-                'date': '2024-11-19'
-            }
-            }
+        mta_alerts = get_mta_alerts()
 
-        mta_alerts_calendarid = 'bbd3d90327a00e53aaff1749fb60d529c844a6892758e453a47a959cad30645b@group.calendar.google.com'
-        event = service.events().insert(calendarId=mta_alerts_calendarid, body=event).execute()
-        print('Event created: %s' % (event.get('htmlLink')))
+        
+
+        for i in range(len(mta_alerts)):
+
+            # formatted_alert = (notification_type, train_id, active_periods, header_text, description_text, human_readable_active_period)
+            
+            event = Calendar_event(service, mta_alerts_calendarid, mta_alerts[i][0], mta_alerts[i][1], mta_alerts[i][2], mta_alerts[i][3], mta_alerts[i][4], mta_alerts[i][5])
+
+            # queue_event_by_active_periods(event, active_period_queue)
+            
+
+
+
+
+
+
+
+
+
+            # event = {
+            #     'summary': f'N test',
+            #     'description': 'header_text' + '\n' + 'description' + '\n' + 'human_readable_active_period',
+            #     'colorId': '4', 
+            #     'start': {
+            #         'dateTime': '2024-11-25T23:45:00-05:00',
+            #         'timeZone': 'America/New_York'
+            #     },
+            #     'end': {
+            #         'dateTime': '2024-11-26T05:00:00-05:00',
+            #         'timeZone': 'America/New_York'
+            #     }
+            # }
+
+            # # service.events().insert(calendarId=mta_alerts_calendarid, body=event).execute()
+
+            # test.lolipop(event, service, mta_alerts_calendarid)
+
+            event.post_events(service)
+
+            
 
 
     except HttpError as error:
         print(f"An error occurred: {error}")
 
 
-# test_push()
+# if __name__ == "main":
+
+#     print('hello')
+#     test_push()
