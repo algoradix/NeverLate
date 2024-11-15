@@ -11,28 +11,34 @@ def get_mta_alerts():
 
     # eastern = pytz.timezone('US/Eastern')
 
-    filtered_alerts = []
-
-
-
+    calendar_formatted_alerts = []
+    database_formatted_alerts = []
     entity = mta_alerts['entity']
+
 
     for i in range(len(entity)):
 
+        # notification type
         notification_type = entity[i]['id'].split(':')[1] # 'alert' or 'planned_work'
 
         if notification_type == 'planned_work':
             notification_type = 'planned work'
 
+        # alert id 
+        alert_id = entity[i]['id'].split(':')[2]
+
+
         alert = entity[i]['alert']
 
         informed_entity = alert['informed_entity']
         for j in range(len(informed_entity)):
+
+            # train_id
             train_id = informed_entity[j].get('route_id', ' ') 
             
             if train_id == 'N':
                 
-                # active period
+                # active periods
                 active_periods = []
                 for period in alert['active_period']:
 
@@ -55,9 +61,14 @@ def get_mta_alerts():
 
                     description_text = filtered_text.strip()
 
+                # updated at
+                updated_at = alert.get('transit_realtime.mercury_alert', {}).get('updated_at', '')
 
                 # human readable active period
                 human_readable_active_period = alert.get('transit_realtime.mercury_alert', {}).get('human_readable_active_period', {})
+
+
+                # print(f'{header_text} {updated_at} \n')
 
                 if human_readable_active_period:
                     human_readable_active_period = human_readable_active_period.get('translation', [0])[0].get('text', 'None')
@@ -65,19 +76,30 @@ def get_mta_alerts():
                     human_readable_active_period = 'None'
 
 
-                formatted_alert = (notification_type, train_id, active_periods, header_text, description_text, human_readable_active_period)
+                calendar_format = (notification_type, alert_id, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period)
+                database_format = (alert_id, updated_at)
+
+
                     
-                filtered_alerts.append(formatted_alert)
+                calendar_formatted_alerts.append(calendar_format)
+                database_formatted_alerts.append(database_format)
+
+
+                # print(type(alert_id), type(updated_at))
+                # print('\n')
                 
            
             # break
 
-    # for i in range(len(filtered_alerts)):
-    #     print(filtered_alerts[i])
+    # for i in range(len(calendar_formatted_alerts)):
+    #     print(calendar_formatted_alerts[i])
     #     print(' ')
     
 
-    return filtered_alerts
+    return {
+        'calendar_formatted_alerts': calendar_formatted_alerts, 
+        'database_formatted_alerts': database_formatted_alerts
+        }
 
 # get_mta_alerts()
 

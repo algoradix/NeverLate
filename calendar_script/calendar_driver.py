@@ -42,30 +42,6 @@ def queue_event_by_active_periods(event, active_period_queue):
     return 0
 
 
-def post_event(event, test_service):
-
-        # print(len(event.active_periods))
-
-        # test_event = {
-        #         'summary': f'N test',
-        #         'description': 'header_text' + '\n' + 'description' + '\n' + 'human_readable_active_period',
-        #         'colorId': '2', 
-        #         'start': {
-        #             'dateTime': '2024-11-27T23:45:00-05:00',
-        #             'timeZone': 'America/New_York'
-        #         },
-        #         'end': {
-        #             'dateTime': '2024-11-28T05:00:00-05:00',
-        #             'timeZone': 'America/New_York'
-        #         }
-        #     }
-        
-        
-
-    
-        
-        return 0
-
 
 def test_push():
 
@@ -92,44 +68,16 @@ def test_push():
         service = build("calendar", "v3", credentials=creds)
         mta_alerts_calendarid = '46a445060a65f2a816253dfb602c10dcc7cfd02749530c69c7ca2616ce5e5747@group.calendar.google.com'
         
-        mta_alerts = get_mta_alerts()
+        mta_alerts = get_mta_alerts().get('calendar_formatted_alerts', {})
 
         
 
         for i in range(len(mta_alerts)):
 
-            # formatted_alert = (notification_type, train_id, active_periods, header_text, description_text, human_readable_active_period)
             
-            event = Calendar_event(service, mta_alerts_calendarid, mta_alerts[i][0], mta_alerts[i][1], mta_alerts[i][2], mta_alerts[i][3], mta_alerts[i][4], mta_alerts[i][5])
+            event = Calendar_event(service, mta_alerts_calendarid, mta_alerts[i][0], mta_alerts[i][1], mta_alerts[i][2], mta_alerts[i][3], mta_alerts[i][4], mta_alerts[i][5], mta_alerts[i][6], mta_alerts[i][7])
 
-            # queue_event_by_active_periods(event, active_period_queue)
-            
-
-
-
-
-
-
-
-
-
-            # event = {
-            #     'summary': f'N test',
-            #     'description': 'header_text' + '\n' + 'description' + '\n' + 'human_readable_active_period',
-            #     'colorId': '4', 
-            #     'start': {
-            #         'dateTime': '2024-11-25T23:45:00-05:00',
-            #         'timeZone': 'America/New_York'
-            #     },
-            #     'end': {
-            #         'dateTime': '2024-11-26T05:00:00-05:00',
-            #         'timeZone': 'America/New_York'
-            #     }
-            # }
-
-            # # service.events().insert(calendarId=mta_alerts_calendarid, body=event).execute()
-
-            # test.lolipop(event, service, mta_alerts_calendarid)
+        
 
             event.post_events(service)
 

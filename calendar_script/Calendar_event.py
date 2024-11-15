@@ -78,14 +78,16 @@ from datetime import datetime
 consolidated_active_periods = {}
 
 class Calendar_event:
-    def __init__(self, service, calendar_id, notificiation_type, train_id, active_periods, header_text, description_text, human_readable_active_period):
+    def __init__(self, service, calendar_id, notificiation_type, alert_id, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period):
         
         self.service = service
         self.calendar_id = calendar_id
         self.notificiation_type = notificiation_type
+        self.alert_id = alert_id
         self.train_id = train_id
         self.header_text = header_text
         self.description = description_text
+        self.updated_at = updated_at
         self.human_readable_active_period = human_readable_active_period
         self.active_periods = active_periods
         self.event = self.initialize_event()
@@ -122,7 +124,7 @@ class Calendar_event:
         return dt.isoformat()
     
 
-    def post_events(self, test_service):
+    def post_events(self, service):
 
         
         for i in range(len(self.active_periods)):
@@ -142,7 +144,7 @@ class Calendar_event:
 
             if time_key not in consolidated_active_periods:
                 # print('New time key')
-                mark_event = test_service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
+                mark_event = service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
                 event_id = mark_event.get('id')
                 consolidated_active_periods[time_key] = event_id
             else:
@@ -151,13 +153,13 @@ class Calendar_event:
                 # print(f'Existing time key: {occupying_event_id}')
 
 
-                occupying_event = test_service.events().get(calendarId=self.calendar_id, eventId=occupying_event_id).execute()
+                occupying_event = service.events().get(calendarId=self.calendar_id, eventId=occupying_event_id).execute()
 
                 # print(f'Old event: {occupying_event['description']}')
                 occupying_event['description'] = occupying_event['description'] + '\n\nNEXT ALERT: \n' + self.event.get('description')
                 # print(f'\nNew event: {occupying_event['description']}')
 
-                test_service.events().update(calendarId=self.calendar_id, eventId=occupying_event_id, body=occupying_event).execute()
+                service.events().update(calendarId=self.calendar_id, eventId=occupying_event_id, body=occupying_event).execute()
 
 
 
