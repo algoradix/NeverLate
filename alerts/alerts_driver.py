@@ -16,6 +16,13 @@ def get_mta_alerts():
     entity = mta_alerts['entity']
 
 
+    # implement logic: 
+    # if alert_id not exist:
+        # process
+    # elif updated_at > db_updated_at: (alert_id exists)
+
+
+
     for i in range(len(entity)):
 
         # notification type
