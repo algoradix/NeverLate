@@ -1,7 +1,6 @@
 import requests
-from datetime import datetime
-import pytz
 import re
+from database import execute_query, check_id_exists
 
 
 
@@ -9,41 +8,48 @@ def get_mta_alerts():
     mta_alerts = requests.get('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json').json()
     
 
-    # eastern = pytz.timezone('US/Eastern')
-
     calendar_formatted_alerts = []
     database_formatted_alerts = []
-    entity = mta_alerts['entity']
 
+    desired_train = 'N'
 
     # implement logic: 
     # if alert_id not exist:
         # process
     # elif updated_at > db_updated_at: (alert_id exists)
 
+    # first get train id, then alert id, then updated at....then all info
+
+    entities = mta_alerts['entity']
 
 
-    for i in range(len(entity)):
+    for entity in entities:
 
-        # notification type
-        notification_type = entity[i]['id'].split(':')[1] # 'alert' or 'planned_work'
+        alert = entity.get('alert', '')
+        informed_entities = alert.get('informed_entity', '')
 
-        if notification_type == 'planned_work':
-            notification_type = 'planned work'
-
-        # alert id 
-        alert_id = entity[i]['id'].split(':')[2]
-
-
-        alert = entity[i]['alert']
-
-        informed_entity = alert['informed_entity']
-        for j in range(len(informed_entity)):
+        for informed_entity in informed_entities:
+            train_id = informed_entity.get('route_id', ' ') 
 
             # train_id
-            train_id = informed_entity[j].get('route_id', ' ') 
-            
-            if train_id == 'N':
+            if train_id == desired_train:
+                
+                id_str = entity.get('id', '')
+
+                # alert_id
+                alert_id = id_str.split(':')[2]
+                # check_id_exists(alert_id)
+
+                # updated at
+                updated_at = alert.get('transit_realtime.mercury_alert', {}).get('updated_at', '')
+                # check_updated_at(updated_at)
+
+
+                # notification type
+                notification_type = id_str.split(':')[1] # 'alert' or 'planned_work'
+
+                if notification_type == 'planned_work':
+                    notification_type = 'planned work'
                 
                 # active periods
                 active_periods = []
@@ -67,15 +73,11 @@ def get_mta_alerts():
                     filtered_text = re.sub(r"(What's happening\?.*\n.*|accessibility icon.*|shuttle bus icon )", "", description_text, flags=re.DOTALL)
 
                     description_text = filtered_text.strip()
-
-                # updated at
-                updated_at = alert.get('transit_realtime.mercury_alert', {}).get('updated_at', '')
+                
 
                 # human readable active period
                 human_readable_active_period = alert.get('transit_realtime.mercury_alert', {}).get('human_readable_active_period', {})
 
-
-                # print(f'{header_text} {updated_at} \n')
 
                 if human_readable_active_period:
                     human_readable_active_period = human_readable_active_period.get('translation', [0])[0].get('text', 'None')
@@ -83,24 +85,13 @@ def get_mta_alerts():
                     human_readable_active_period = 'None'
 
 
-                calendar_format = (notification_type, alert_id, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period)
+                calendar_format = (alert_id, notification_type, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period)
                 database_format = (alert_id, updated_at)
 
 
                     
                 calendar_formatted_alerts.append(calendar_format)
                 database_formatted_alerts.append(database_format)
-
-
-                # print(type(alert_id), type(updated_at))
-                # print('\n')
-                
-           
-            # break
-
-    # for i in range(len(calendar_formatted_alerts)):
-    #     print(calendar_formatted_alerts[i])
-    #     print(' ')
     
 
     return {
@@ -108,15 +99,7 @@ def get_mta_alerts():
         'database_formatted_alerts': database_formatted_alerts
         }
 
-# get_mta_alerts()
 
-
-''' 
-
-
-
-
-'''
 
 
 

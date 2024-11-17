@@ -22,6 +22,8 @@ DB_PARAMS = {
 def get_db_connection():
     try:
         conn = psycopg2.connect(**DB_PARAMS)
+        if not conn:
+            return None
         return conn
     except psycopg2.Error as e:
         print("Error connecting to the database:", e)
@@ -35,8 +37,6 @@ def execute_query(query, params=None):
 
     try:
         conn = get_db_connection()
-        if not conn:
-            return None
         cursor = conn.cursor()
         cursor.execute(query, params)
         conn.commit()
@@ -50,4 +50,40 @@ def execute_query(query, params=None):
             conn.close()
         
 
-        
+def write_MTA_alerts(database_formatted_alerts):
+
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS alerts (
+        alert_id VARCHAR(30) NOT NULL,
+        updated_at INT NOT NULL DEFAULT 0
+    );
+    """
+    execute_query(create_table_query)
+    print("Table checked/created.")
+
+
+    insert_query = """
+    INSERT INTO alerts (alert_id, updated_at) 
+    VALUES (%s, %s)
+    """
+
+    for data in database_formatted_alerts:
+        execute_query(insert_query, data)
+
+
+def check_id_exists(id):
+    query = "SELECT 1 FROM alerts WHERE alert_id = %s LIMIT 1;"
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+        return result is not None  # Returns True if id exists
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+    
+    finally:
+        cursor.close()
+        conn.close()
+
