@@ -48,19 +48,22 @@ def execute_query(query, params=None):
             cursor.close()
         if conn:
             conn.close()
-        
 
-def write_MTA_alerts(database_formatted_alerts):
 
+def create_table():
     create_table_query = """
     CREATE TABLE IF NOT EXISTS alerts (
         alert_id VARCHAR(30) NOT NULL,
         updated_at INT NOT NULL DEFAULT 0
     );
     """
+
     execute_query(create_table_query)
     print("Table checked/created.")
 
+
+
+def write_MTA_alerts(database_formatted_alerts):
 
     insert_query = """
     INSERT INTO alerts (alert_id, updated_at) 
@@ -86,4 +89,26 @@ def check_id_exists(id):
     finally:
         cursor.close()
         conn.close()
+
+
+def get_updated_at(id):
+    query = "SELECT updated_at FROM alerts WHERE alert_id = %s LIMIT 1;"
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
+
+        if result: 
+            return result[0]
+        else:
+            return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
+    finally:
+        cursor.close()
+        conn.close()
+
 
