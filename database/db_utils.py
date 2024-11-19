@@ -67,8 +67,8 @@ def write_MTA_alerts(database_formatted_alerts):
     VALUES (%s, %s)
     """
 
-    for data in database_formatted_alerts:
-        execute_query(insert_query, data)
+    for alert in database_formatted_alerts:
+        execute_query(insert_query, alert)
 
 
 def check_id_exists(id):

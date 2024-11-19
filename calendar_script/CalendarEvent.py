@@ -4,19 +4,19 @@ from datetime import datetime
 
 consolidated_active_periods = {}
 
-class Calendar_event:
-    def __init__(self, service, calendar_id, notificiation_type, alert_id, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period):
+class CalendarEvent:
+    def __init__(self, service, calendar_id, calendar_formatted_alert):
         
         self.service = service
         self.calendar_id = calendar_id
-        self.notificiation_type = notificiation_type
-        self.alert_id = alert_id
-        self.train_id = train_id
-        self.header_text = header_text
-        self.description = description_text
-        self.updated_at = updated_at
-        self.human_readable_active_period = human_readable_active_period
-        self.active_periods = active_periods
+        self.notificiation_type = calendar_formatted_alert.get('notificiation_type')
+        self.alert_id = calendar_formatted_alert.get('alert_id')
+        self.train_id = calendar_formatted_alert.get('train_id')
+        self.header_text = calendar_formatted_alert.get('header_text')
+        self.description = calendar_formatted_alert.get('description', '')
+        self.updated_at = calendar_formatted_alert.get('updated_at')
+        self.human_readable_active_period = calendar_formatted_alert.get('human_readable_active_period')
+        self.active_periods = calendar_formatted_alert.get('active_periods')
         self.event = self.initialize_event()
 
     def color_code_event(self):

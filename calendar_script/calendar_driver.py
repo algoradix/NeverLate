@@ -8,38 +8,36 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-
 from alerts import get_mta_alerts
-from calendar_script.Calendar_event import Calendar_event
-
+from calendar_script.CalendarEvent import CalendarEvent
 
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"] 
 
-active_period_queue = {}
-def queue_event_by_active_periods(event, active_period_queue):
+# active_period_queue = {}
+# def queue_event_by_active_periods(event, active_period_queue):
 
-    for i in range(len(event.active_periods)):
+#     for i in range(len(event.active_periods)):
             
-            start = event.format_rfc3339(event.active_periods[i][0])
-            end = event.format_rfc3339(event.active_periods[i][1])
+#             start = event.format_rfc3339(event.active_periods[i][0])
+#             end = event.format_rfc3339(event.active_periods[i][1])
 
-            event.event['start']['dateTime'] = start
-            event.event['end']['dateTime'] = end
+#             event.event['start']['dateTime'] = start
+#             event.event['end']['dateTime'] = end
 
-            period_key = (start, end)
+#             period_key = (start, end)
 
-            if period_key not in active_period_queue:
-                 active_period_queue[period_key] = []
-            active_period_queue[period_key].append(event)
+#             if period_key not in active_period_queue:
+#                  active_period_queue[period_key] = []
+#             active_period_queue[period_key].append(event)
 
-            # print(event.event, "\n")
-            # test_service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
+#             # print(event.event, "\n")
+#             # test_service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
 
 
 
-    return 0
+#     return 0
 
 
 
@@ -74,8 +72,8 @@ def test_push():
 
         for i in range(len(mta_alerts)):
 
-            
-            event = Calendar_event(service, mta_alerts_calendar_id, mta_alerts[i][0], mta_alerts[i][1], mta_alerts[i][2], mta_alerts[i][3], mta_alerts[i][4], mta_alerts[i][5], mta_alerts[i][6], mta_alerts[i][7])
+            print(mta_alerts[i], '\n')
+            event = CalendarEvent(service, mta_alerts_calendar_id, mta_alerts[i])
 
         
 

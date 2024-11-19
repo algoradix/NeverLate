@@ -85,10 +85,19 @@ def get_mta_alerts():
                     human_readable_active_period = 'None'
 
 
-                calendar_format = (alert_id, notification_type, train_id, active_periods, header_text, description_text, updated_at, human_readable_active_period)
+
+                calendar_format = {
+                    'alert_id': alert_id, 
+                    'notification_type': notification_type, 
+                    'train_id': train_id, 
+                    'active_periods': active_periods, 
+                    'header_text': header_text, 
+                    'description_text': description_text, 
+                    'updated_at': updated_at, 
+                    'human_readable_active_period': human_readable_active_period
+                }
+                
                 database_format = (alert_id, updated_at)
-
-
                     
                 calendar_formatted_alerts.append(calendar_format)
                 database_formatted_alerts.append(database_format)

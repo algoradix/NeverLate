@@ -27,7 +27,6 @@
 **/values.dev.yaml
 LICENSE
 README.md
-secrets/
 *.py[cod]
 env/
 venv/
