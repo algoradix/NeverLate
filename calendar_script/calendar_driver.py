@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-from alerts import get_mta_alerts
+# from alerts import get_mta_alerts
 from calendar_script.CalendarEvent import CalendarEvent
 
 
@@ -41,7 +41,7 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.events"]
 
 
 
-def test_push():
+def calendar_head(calendar_formatted_alerts):
 
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -64,22 +64,17 @@ def test_push():
 
     try:
         service = build("calendar", "v3", credentials=creds)
-        mta_alerts_calendar_id = '46a445060a65f2a816253dfb602c10dcc7cfd02749530c69c7ca2616ce5e5747@group.calendar.google.com'
-        
-        mta_alerts = get_mta_alerts().get('calendar_formatted_alerts', {})
-
+        mta_alerts_calendar_id = 'cf5202eb59df5f34a7607d0175901c028e57c06856386cdffaf88904ea783816@group.calendar.google.com'
         
 
-        for i in range(len(mta_alerts)):
 
-            print(mta_alerts[i], '\n')
-            event = CalendarEvent(service, mta_alerts_calendar_id, mta_alerts[i])
+        for i in range(len(calendar_formatted_alerts)):
 
-        
+            event = CalendarEvent(service, mta_alerts_calendar_id, calendar_formatted_alerts[i])
 
+    
             event.post_events(service)
 
-            
 
 
     except HttpError as error:
