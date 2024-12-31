@@ -64,7 +64,7 @@ def calendar_head(calendar_formatted_alerts):
 
     try:
         service = build("calendar", "v3", credentials=creds)
-        mta_alerts_calendar_id = 'cf5202eb59df5f34a7607d0175901c028e57c06856386cdffaf88904ea783816@group.calendar.google.com'
+        mta_alerts_calendar_id = 'f2f40b93027e5974c4e4eff53bb3340d5c4caf25f68ce419f17fd7295825ae3d@group.calendar.google.com'
         
 
 

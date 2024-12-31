@@ -79,12 +79,6 @@ def get_mta_alerts():
 
 
     desired_train = 'N'
-
-    # implement logic: 
-    # if alert_id not exist:
-        # process
-    # elif updated_at > db_updated_at: (alert_id exists)
-
   
 
     entities = mta_alerts['entity']
@@ -112,8 +106,10 @@ def get_mta_alerts():
 
 
                 if check_id_exists(alert_id) == False:
+                    print(alert_id, ' new id')
                     process_alert(id_str, alert, alert_id, train_id, updated_at, calendar_formatted_alerts, database_formatted_alerts)
                 elif updated_at > get_updated_at(alert_id):
+                    print(updated_at, ' ', get_updated_at(alert_id), ' updated')
                     process_alert(id_str, alert, alert_id, train_id, updated_at, calendar_formatted_alerts, database_formatted_alerts)
 
         
@@ -127,8 +123,6 @@ def get_mta_alerts():
 
 
 
-
-# if __name__ == '__main__':
   
 
 

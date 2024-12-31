@@ -7,6 +7,8 @@ create_table()
 
 
 alerts = get_mta_alerts()
+
+
 database_formatted_alerts = alerts.get('database_formatted_alerts', {})
 calendar_formatted_alerts = alerts.get('calendar_formatted_alerts', {})
 

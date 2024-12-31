@@ -9,7 +9,7 @@ env/
 
 # Sensitive information (if any secrets are defined here)
 *.env
-/secrets
+# /secrets
 
 # macOS
 .DS_Store

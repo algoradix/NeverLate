@@ -1,0 +1,7 @@
+
+If no token, run gen_tok.py
+
+docker compose up --build 
+
+
+
