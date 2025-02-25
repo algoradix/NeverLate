@@ -44,6 +44,5 @@ USER appuser
 # Copy the source code into the container.
 COPY . .
 
-
 # Run the application.
 CMD ["python", "app.py"]

@@ -1,1 +1,4 @@
 docker compose up --build 
+
+
+chmod -R 777 secrets/ 

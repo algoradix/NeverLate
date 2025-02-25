@@ -40,14 +40,14 @@ def generate_token():
     #     service = build("calendar", "v3", credentials=creds)
     #     mta_alerts_calendar_id = 'cf5202eb59df5f34a7607d0175901c028e57c06856386cdffaf88904ea783816@group.calendar.google.com'
         
-    #     print(calendar_formatted_alerts)
+    #     print(new_or_updated_alerts)
 
-    #     for i in range(len(calendar_formatted_alerts)):
+    #     for i in range(len(new_or_updated_alerts)):
 
-    #         event = CalendarEvent(service, mta_alerts_calendar_id, calendar_formatted_alerts[i])
+    #         event = CalendarEvent(service, mta_alerts_calendar_id, new_or_updated_alerts[i])
 
     
-    #         event.post_events(service)
+    #         event.post_event(service)
 
 
 

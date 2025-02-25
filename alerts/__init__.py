@@ -1,3 +1,3 @@
-from alerts.alerts_driver import get_mta_alerts
+from alerts.alerts_driver import filter_MTA_alerts
 
-__all__ = [get_mta_alerts]
+__all__ = [filter_MTA_alerts]
