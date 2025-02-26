@@ -184,6 +184,12 @@ def get_db_ids():
         cursor.close()
         conn.close()
 
+def delete_id_in_db(alert_id):
+    query = "DELETE FROM alerts WHERE alert_id = %s;"
+    try:
+        execute_query(query, (alert_id,))
+    except Exception as e:
+        print(f"Error clearing calendar event ids: {e}")
 
 # if __name__ == '__main__':
 #     pass
