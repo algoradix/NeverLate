@@ -8,40 +8,16 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-# from alerts import get_mta_alerts
-from calendar_script.CalendarEvent import CalendarEvent
+from calendar_scripts.CalendarEvent import CalendarEvent
+from database import get_event_ids_linked_to_alert
 
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"] 
-
-# active_period_queue = {}
-# def queue_event_by_active_periods(event, active_period_queue):
-
-#     for i in range(len(event.active_periods)):
-            
-#             start = event.format_rfc3339(event.active_periods[i][0])
-#             end = event.format_rfc3339(event.active_periods[i][1])
-
-#             event.event['start']['dateTime'] = start
-#             event.event['end']['dateTime'] = end
-
-#             period_key = (start, end)
-
-#             if period_key not in active_period_queue:
-#                  active_period_queue[period_key] = []
-#             active_period_queue[period_key].append(event)
-
-#             # print(event.event, "\n")
-#             # test_service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
+CALENDAR_ID = 'ae1af222e368c7a5c2aebb64c77ecb1214bd92014c65b15cc839fec8fa2ff64b@group.calendar.google.com'
 
 
-
-#     return 0
-
-
-
-def calendar_head(calendar_formatted_alerts):
+def gog_calendar_init():
 
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -64,19 +40,26 @@ def calendar_head(calendar_formatted_alerts):
 
     try:
         service = build("calendar", "v3", credentials=creds)
-        mta_alerts_calendar_id = 'f2f40b93027e5974c4e4eff53bb3340d5c4caf25f68ce419f17fd7295825ae3d@group.calendar.google.com'
-        
-
-
-        for i in range(len(calendar_formatted_alerts)):
-
-            event = CalendarEvent(service, mta_alerts_calendar_id, calendar_formatted_alerts[i])
-
-    
-            event.post_events(service)
-
-
-
+        return service
     except HttpError as error:
         print(f"An error occurred: {error}")
+        return None
 
+def build_and_post_events(fresh_MTA_alerts):
+    service = gog_calendar_init()
+    if service == None: print(f"An error occurred")
+
+    for alert in fresh_MTA_alerts:
+        event = CalendarEvent(service, CALENDAR_ID, alert)
+        event.post_event(service)
+
+def delete_all_linked_events_in_calendar(alert_id):
+    service = gog_calendar_init()
+
+    event_ids = get_event_ids_linked_to_alert(alert_id)
+    for event_id in event_ids:
+        try:
+            service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+        except HttpError as error:
+            print(f"An error occurred: {error}")
+    

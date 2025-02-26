@@ -1,21 +1,13 @@
-from database import write_MTA_alerts, create_table
-from alerts import get_mta_alerts
-from calendar_script import calendar_head
+from database import create_table
+from alerts import filter_MTA_alerts
+from calendar_scripts import build_and_post_events
 
 
-create_table()
 
+if __name__ == '__main__':
+    create_table()
 
-alerts = get_mta_alerts()
+    fresh_MTA_alerts = filter_MTA_alerts('N')
 
-
-database_formatted_alerts = alerts.get('database_formatted_alerts', {})
-calendar_formatted_alerts = alerts.get('calendar_formatted_alerts', {})
-
-
-write_MTA_alerts(database_formatted_alerts)
-
-calendar_head(calendar_formatted_alerts)
-
-
+    build_and_post_events(fresh_MTA_alerts)
 
