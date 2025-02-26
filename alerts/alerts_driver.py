@@ -8,7 +8,7 @@ import os
 # project_dir = os.path.abspath(os.path.join(script_dir, '..'))  
 # sys.path.append(project_dir)
 
-from database import update_alert_entry_in_db, id_exists, get_updated_at, delete_all_linked_events_in_db, get_db_ids
+from database import update_alert_entry_in_db, id_exists, get_updated_at, delete_all_linked_events_in_db, get_db_ids, delete_id_in_db
 from calendar_scripts import delete_all_linked_events_in_calendar
 
 logging.basicConfig(level=logging.INFO)
@@ -98,13 +98,13 @@ def filter_MTA_alerts(desired_train: str = 'N'):
     for single_alert in MTA_service_alerts:
         process_alert(single_alert, desired_train)
 
-    db_ids = get_db_ids()
-    for db_id in db_ids:
-        if db_id not in ENCOUNTERED_ALERT_IDS:
-            logging.info(f" {db_id} removed from db and calendar")
-            delete_all_linked_events_in_calendar(db_id)
-            delete_all_linked_events_in_db(db_id)
-
+    db_alert_ids = get_db_ids()
+    for id in db_alert_ids:
+        if id not in ENCOUNTERED_ALERT_IDS:
+            logging.info(f" {id} removed from db and calendar")
+            delete_all_linked_events_in_calendar(id)
+            delete_all_linked_events_in_db(id)
+            delete_id_in_db(id)
 
     return FRESH_MTA_ALERTS
 
