@@ -1,5 +1,7 @@
-from datetime import datetime, timezone
+
 import os.path
+from calendar_scripts.CalendarEvent import CalendarEvent
+from database import get_event_ids_linked_to_alert
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -7,18 +9,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-
-from calendar_scripts.CalendarEvent import CalendarEvent
-from database import get_event_ids_linked_to_alert
-
-
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"] 
 CALENDAR_ID = 'ae1af222e368c7a5c2aebb64c77ecb1214bd92014c65b15cc839fec8fa2ff64b@group.calendar.google.com'
 
-
 def gog_calendar_init():
-
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
