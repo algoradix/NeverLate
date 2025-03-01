@@ -53,8 +53,6 @@ def format_alert_for_calendar(id_str, alert, alert_id, train_id, updated_at):
         'updated_at': updated_at, 
         'human_readable_active_period': human_readable_active_period
     }
-    # print('Calendar format $$$$ \n')
-    # print(calendar_format)
     FRESH_MTA_ALERTS.append(calendar_format)
 
 def get_API_MTA_alerts():
@@ -74,7 +72,6 @@ def process_alert(single_alert, desired_train):
             id_str = single_alert.get('id', '')
             alert_id = id_str.split(':')[2]
             updated_at = alert.get('transit_realtime.mercury_alert', {}).get('updated_at', 0)
-
     
             if not id_exists(alert_id):
                 logging.info(f" {alert_id} processed as new")
@@ -89,8 +86,6 @@ def process_alert(single_alert, desired_train):
                 update_alert_entry_in_db(alert_id, updated_at)
                 format_alert_for_calendar(id_str, alert, alert_id, train_id, updated_at)
             ENCOUNTERED_ALERT_IDS.add(alert_id)
-
-
 
 def filter_MTA_alerts(desired_train: str = 'N'):
     MTA_service_alerts = get_API_MTA_alerts().get('entity', [])
@@ -107,7 +102,6 @@ def filter_MTA_alerts(desired_train: str = 'N'):
             delete_id_in_db(id)
 
     return FRESH_MTA_ALERTS
-
 
 
 # if __name__ == '__main__':

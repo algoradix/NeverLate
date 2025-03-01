@@ -9,8 +9,6 @@ sys.path.append(project_dir)
 import json
 import requests
 
-
-
 def save_mta_alerts_to_json():
     api_url = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json'  
     response = requests.get(api_url)

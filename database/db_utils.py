@@ -9,7 +9,6 @@ def get_db_password():
         print("Secret file not found")
         return None
     
-
 DB_PARAMS = {
     'dbname': 'mta_data',
     'user': 'postgres',
@@ -28,11 +27,9 @@ def get_db_connection():
         print("Error connecting to the database:", e)
         return None
 
-
 def execute_query(query, params=None):
     conn = None
     cursor = None
-
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -47,7 +44,6 @@ def execute_query(query, params=None):
         if conn:
             conn.close()
 
-
 def create_table():
     create_table_query = """
     CREATE TABLE IF NOT EXISTS alerts (
@@ -58,21 +54,6 @@ def create_table():
     """
     execute_query(create_table_query)
     print("Table checked/created.")
-
-
-
-
-
-# def write_MTA_alerts(database_formatted_alerts):
-
-#     insert_query = """
-#     INSERT INTO alerts (alert_id, updated_at) 
-#     VALUES (%s, %s)
-#     """
-
-#     for alert in database_formatted_alerts:
-#         execute_query(insert_query, alert)
-
 
 def id_exists(id):
     query = f"SELECT EXISTS (SELECT 1 FROM alerts WHERE alert_id = %s);"
@@ -90,7 +71,6 @@ def id_exists(id):
     finally:
         cursor.close()
         conn.close()
-
 
 def get_updated_at(id):
     query = "SELECT updated_at FROM alerts WHERE alert_id = %s LIMIT 1;"
@@ -112,7 +92,6 @@ def get_updated_at(id):
         cursor.close()
         conn.close()
 
-
 def update_alert_entry_in_db(alert_id: str, updated_at: int):
     query = """
     INSERT INTO alerts (alert_id, updated_at) 
@@ -127,7 +106,6 @@ def update_alert_entry_in_db(alert_id: str, updated_at: int):
 
 def is_alert_new_or_updated(alert_id: str, updated_at: int) -> bool:
     return not id_exists(alert_id) or updated_at > get_updated_at(alert_id)
-
 
 def link_event_id_to_alert_in_db(alert_id: str, event_id: str):
     query = "UPDATE alerts SET calendar_event_ids = array_append(calendar_event_ids, %s) WHERE alert_id = %s;"
@@ -171,7 +149,6 @@ def get_db_ids():
         cursor = conn.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
-
         if result: 
             return [row[0] for row in result]
         else:
@@ -190,6 +167,7 @@ def delete_id_in_db(alert_id):
         execute_query(query, (alert_id,))
     except Exception as e:
         print(f"Error clearing calendar event ids: {e}")
+
 
 # if __name__ == '__main__':
 #     pass
