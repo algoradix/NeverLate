@@ -2,12 +2,9 @@ import pytz
 from datetime import datetime
 from database import link_event_id_to_alert_in_db
 
-
-consolidated_active_periods = {}
-
 class CalendarEvent:
     def __init__(self, service, calendar_id, calendar_formatted_alert):
-        self.grey_color               = '8'
+        self.grey_color                    = '8'
         self.bold_red_color                = '11'
         self.service                       = service
         self.calendar_id                   = calendar_id
@@ -51,21 +48,6 @@ class CalendarEvent:
         return dt.isoformat()
     
     def post_event(self, service):
-        # for i in range(len(self.active_periods)):
-
-        #     start = self.format_rfc3339(self.active_periods[i][0])
-        #     end = self.format_rfc3339(self.active_periods[i][1])
-
-        #     if end == 0: end = start + 1800 # if no end time, add 30 minutes
-
-        #     self.event['start']['dateTime'] = start
-        #     self.event['end']['dateTime'] = end
-
-        #     created_event = service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
-        #     event_id = created_event.get('id')
-        #     link_event_id_to_alert_in_db(self.alert_id, event_id)
-            
-
         for period in self.active_periods:
             
             start_time, end_time = period[0], period[1]
@@ -79,24 +61,6 @@ class CalendarEvent:
             created_event = service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
             event_id = created_event.get('id')
             link_event_id_to_alert_in_db(self.alert_id, event_id)
-
-
-
-
-            # if time_key not in consolidated_active_periods:
-            #     created_event = service.events().insert(calendarId=self.calendar_id, body=self.event).execute()
-            #     event_id = created_event.get('id')
-            #     consolidated_active_periods[time_key] = event_id
-            # else:
-            #     existing_event_id = consolidated_active_periods[time_key]
-            #     existing_event = service.events().get(calendarId=self.calendar_id, eventId=existing_event_id).execute()
-            #     existing_event['description'] += f"\n\nNEXT ALERT: \n{self.event.get('description')}"
-            #     service.events().update(calendarId=self.calendar_id, eventId=existing_event_id, body=existing_event).execute()
-
-
-
-
-
 
 
 
